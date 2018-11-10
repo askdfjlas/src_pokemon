@@ -2,8 +2,8 @@ const PLAYERSPEED = 3;
 
 class playerState {
   constructor() {
-    this.x = -225;
-    this.y = 150;
+    this.x = 0;
+    this.y = 0;
 
     this.zRotation = 0;
     this.xRotation = 0;

@@ -1,6 +1,3 @@
-const WIDTH = 900;
-const HEIGHT = 600;
-
 var canvas, context;
 
 var sim_time = 0;

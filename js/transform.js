@@ -1,10 +1,20 @@
+const WIDTH = 900;
+const HEIGHT = 600;
+
+const CAMERADISTANCE = 100;
+
+const VIEWX = WIDTH/2;
+const VIEWY = (HEIGHT/2);
+
 function transform() {
   true_point_arr = []
 
   var translateMatrix = translate();
   var rotateMatrix = rotate();
+  var projectionMatrix = project();
 
   var transformMatrix = math.multiply(translateMatrix, rotateMatrix);
+  transformMatrix = math.multiply(projectionMatrix, transformMatrix);
 
   for(var i = 0; i < point_arr.length; i++) {
     var original = point_arr[i];
@@ -16,22 +26,22 @@ function transform() {
       [1]]
     );
 
-    point = math.multiply(2, point);
     point = math.multiply(transformMatrix, point);
-
     var newPoint = point.valueOf();
 
-    true_point_arr.push([newPoint[0][0], newPoint[1][0], newPoint[2][0]]);
+    norm_and_transform(newPoint);
+
+    true_point_arr.push([newPoint[0][0], newPoint[1][0], newPoint[2][0], newPoint[3][0]]);
   }
 
   return true_point_arr;
 }
 
 function translate() {
-  translateMatrix = math.matrix(
+  var translateMatrix = math.matrix(
     [[1, 0, 0, -ahri.x],
     [0, 1, 0, ahri.y],
-    [0, 0, 1, 0,],
+    [0, 0, 1, 2*CAMERADISTANCE],
     [0, 0, 0, 1]]
   );
 
@@ -46,7 +56,7 @@ function rotateZ() {
   var c = Math.cos(ahri.zRotation);
   var s = Math.sin(ahri.zRotation);
 
-  rotateMatrix = math.matrix(
+  var rotateMatrix = math.matrix(
     [[c, -s, 0, 0],
     [s, c, 0, 0],
     [0, 0, 1, 0],
@@ -60,7 +70,7 @@ function rotateX() {
   var c = Math.cos(ahri.xRotation);
   var s = Math.sin(ahri.xRotation);
 
-  rotateMatrix = math.matrix(
+  var rotateMatrix = math.matrix(
     [[1, 0, 0, 0],
     [0, c, -s, 0],
     [0, s, c, 0],
@@ -70,6 +80,36 @@ function rotateX() {
   return rotateMatrix;
 }
 
+
 function project() {
-  var tmp = 0;
+  const f = 300;
+
+  // Projection matrix taken from http://metalbyexample.com/linear-algebra/
+  var projectionMatrix = math.matrix(
+    [[CAMERADISTANCE/VIEWX, 0, 0, 0],
+    [0, CAMERADISTANCE/VIEWY, 0, 0],
+    [0, 0, -f/(f-CAMERADISTANCE), -(f*CAMERADISTANCE)/(f-CAMERADISTANCE)],
+    [0, 0, -1, 0]]
+  );
+
+  return projectionMatrix;
+}
+
+function norm_and_transform(point) {
+  point[0][0] /= point[3][0];
+  point[1][0] /= point[3][0];
+
+  point[0][0] *= VIEWX;
+  point[1][0] *= VIEWY;
+}
+
+// For testing
+function log_point_arr() {
+  var arr = transform();
+
+  for(var i = 0; i < arr.length; i++) {
+    for(var j = 0; j < 4; j++) {
+      console.log(arr[i][j]);
+    }
+  }
 }
