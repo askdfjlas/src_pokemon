@@ -29,6 +29,8 @@ function transform() {
     point = math.multiply(transformMatrix, point);
     var newPoint = point.valueOf();
 
+    if(clip_test(newPoint)) continue;
+
     norm_and_transform(newPoint);
 
     true_point_arr.push([newPoint[0][0], newPoint[1][0], newPoint[2][0], newPoint[3][0]]);
@@ -89,10 +91,17 @@ function project() {
     [[CAMERADISTANCE/VIEWX, 0, 0, 0],
     [0, CAMERADISTANCE/VIEWY, 0, 0],
     [0, 0, -f/(f-CAMERADISTANCE), -(f*CAMERADISTANCE)/(f-CAMERADISTANCE)],
-    [0, 0, -1, 0]]
+    [0, 0, 1, 0]]
   );
 
   return projectionMatrix;
+}
+
+function clip_test(point) {
+  if(point[0][0] < -point[3][0] || point[1][0] < -point[3][0]) return true;
+  if(point[0][0] > point[3][0] || point[1][0] > point[3][0]) return true;
+
+  return false;
 }
 
 function norm_and_transform(point) {
