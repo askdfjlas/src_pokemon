@@ -1,13 +1,13 @@
 const WIDTH = 900;
 const HEIGHT = 600;
 
-const CAMERADISTANCE = 100;
+const CAMERADISTANCE = 600;
 
 const VIEWX = WIDTH/2;
 const VIEWY = (HEIGHT/2);
 
 function transform() {
-  true_point_arr = []
+  true_point_arr = [];
 
   var translateMatrix = translate();
   var rotateMatrix = rotate();
@@ -113,7 +113,8 @@ function norm_and_transform(point) {
 }
 
 // For testing
-function log_point_arr() {
+/*
+function log_transform() {
   var arr = transform();
 
   for(var i = 0; i < arr.length; i++) {
@@ -122,3 +123,29 @@ function log_point_arr() {
     }
   }
 }
+
+function log_eye_space() {
+  true_point_arr = [];
+
+  var translateMatrix = translate();
+  var rotateMatrix = rotate();
+
+  var transformMatrix = math.multiply(translateMatrix, rotateMatrix);
+
+  for(var i = 0; i < point_arr.length; i++) {
+    var original = point_arr[i];
+
+    var point = math.matrix(
+      [[original[0]*TILESIZE],
+      [original[1]*TILESIZE],
+      [original[2]*TILESIZE],
+      [1]]
+    );
+
+    point = math.multiply(transformMatrix, point);
+
+    var newArr = point.valueOf();
+    console.log(newArr[0] + " " + newArr[1] + " " + newArr[2]);
+  }
+}
+*/
