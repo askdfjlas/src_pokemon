@@ -4,10 +4,10 @@ const HEIGHT = 600;
 const CAMERADISTANCE = 600;
 
 const VIEWX = WIDTH/2;
-const VIEWY = (HEIGHT/2);
+const VIEWY = HEIGHT/2;
 
 function transform() {
-  true_point_arr = [];
+  var true_point_arr = [];
 
   var translateMatrix = translate();
   var rotateMatrix = rotate();
@@ -16,27 +16,34 @@ function transform() {
   var transformMatrix = math.multiply(translateMatrix, rotateMatrix);
   transformMatrix = math.multiply(projectionMatrix, transformMatrix);
 
-  for(var i = 0; i < point_arr.length; i++) {
-    var original = point_arr[i];
+  var width = point_arr[0].length;
+  var height = point_arr.length;
 
-    var point = math.matrix(
-      [[original[0]*TILESIZE],
-      [original[1]*TILESIZE],
-      [original[2]*TILESIZE],
-      [1]]
-    );
+  for(var i = 0; i < height; i++) {
+    true_point_arr.push([]);
+    for(var j = 0; j < width; j++) {
+      var original = point_arr[i][j];
+      var newPoint = transform_point(original, transformMatrix);
 
-    point = math.multiply(transformMatrix, point);
-    var newPoint = point.valueOf();
-
-    if(clip_test(newPoint)) continue;
-
-    norm_and_transform(newPoint);
-
-    true_point_arr.push([newPoint[0][0], newPoint[1][0], newPoint[2][0], newPoint[3][0]]);
+      true_point_arr[i].push(newPoint);
+    }
   }
 
   return true_point_arr;
+}
+
+function transform_point(original, transformMatrix) {
+  var point = math.matrix(
+    [[original[0]*TILESIZE],
+    [original[1]*TILESIZE],
+    [original[2]*TILESIZE],
+    [1]]
+  );
+
+  point = math.multiply(transformMatrix, point);
+  var newPoint = point.valueOf();
+
+  return [newPoint[0][0], newPoint[1][0], newPoint[2][0], newPoint[3][0]];
 }
 
 function translate() {
@@ -98,18 +105,18 @@ function project() {
 }
 
 function clip_test(point) {
-  if(point[0][0] < -point[3][0] || point[1][0] < -point[3][0]) return true;
-  if(point[0][0] > point[3][0] || point[1][0] > point[3][0]) return true;
+  if(point[0] < -point[3] || point[1] < -point[3]) return true;
+  if(point[0] > point[3] || point[1] > point[3]) return true;
 
   return false;
 }
 
 function norm_and_transform(point) {
-  point[0][0] /= point[3][0];
-  point[1][0] /= point[3][0];
+  point[0] /= point[3];
+  point[1] /= point[3];
 
-  point[0][0] *= VIEWX;
-  point[1][0] *= VIEWY;
+  point[0] *= WIDTH/2;
+  point[1] *= HEIGHT/2;
 }
 
 // For testing
