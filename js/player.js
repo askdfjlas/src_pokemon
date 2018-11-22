@@ -6,13 +6,12 @@ class playerState {
     this.y = 0;
 
     this.zRotation = 0;
-    this.xRotation = 0;
+    this.xRotation = -CAMERAANGLE;
 
     this.inputs = [false, false, false, false, false, false, false, false];
+    this.imgs = [];
   }
 }
-
-var ahri = new playerState();
 
 function updatePlayer() {
   if(ahri.inputs[0]) {

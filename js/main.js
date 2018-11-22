@@ -2,7 +2,7 @@ var canvas, context;
 
 var sim_time = 0;
 var prev_time = 0;
-var fps = 60;
+const FPS = 60;
 
 function init() {
   generate_points();
@@ -19,7 +19,7 @@ function init() {
 function nextFrame(time) {
   sim_time += time - prev_time;
 
-  if(sim_time < 1000/fps) {
+  if(sim_time < 1000/FPS) {
     requestAnimationFrame(main);
     return false;
   }

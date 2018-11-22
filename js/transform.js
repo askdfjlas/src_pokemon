@@ -1,7 +1,8 @@
 const WIDTH = 900;
 const HEIGHT = 600;
 
-const CAMERADISTANCE = 600;
+const CAMERADISTANCE = 400;
+const CAMERAANGLE = 0.5;
 
 const VIEWX = WIDTH/2;
 const VIEWY = HEIGHT/2;
@@ -47,10 +48,12 @@ function transform_point(original, transformMatrix) {
 }
 
 function translate() {
+  var zOffset = ahri.y*Math.atan(ahri.xRotation);
+
   var translateMatrix = math.matrix(
     [[1, 0, 0, -ahri.x],
     [0, 1, 0, ahri.y],
-    [0, 0, 1, 2*CAMERADISTANCE],
+    [0, 0, 1, 2*CAMERADISTANCE + zOffset],
     [0, 0, 0, 1]]
   );
 

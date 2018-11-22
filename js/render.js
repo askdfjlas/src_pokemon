@@ -1,6 +1,19 @@
+const PSIZE = 60;
+
+const PXOFFSET = 450 - PSIZE/2;
+const PYOFFSET = 300 - PSIZE/2 - 10;
+
+const XOFFSET = 428;
+const YOFFSET = 282;
+
 function draw() {
   context.clearRect(0, 0, WIDTH, HEIGHT);
 
+  draw_tiles();
+  draw_player();
+}
+
+function draw_tiles() {
   var true_point_arr = transform();
 
   var width = tilemap[0].length;
@@ -14,9 +27,9 @@ function draw() {
           draw_grid_square(i, j, true_point_arr);
 
           break;
-        }
       }
     }
+  }
 }
 
 function draw_grid_square(i, j, t) {
@@ -34,21 +47,26 @@ function draw_grid_square(i, j, t) {
     if(clip_test(pcpy)) return;
     norm_and_transform(pcpy);
 
+    // Show points
     // context.fillStyle = "#FFFFFF";
-    // context.fillRect(pcpy[0] - 2 + WIDTH/2, pcpy[1] - 2 + HEIGHT/2, 4, 4);
+    // context.fillRect(pcpy[0] - 2 + XOFFSET, pcpy[1] - 2 + YOFFSET, 4, 4);
 
     if(i == 0) {
       orgx = pcpy[0];
       orgy = pcpy[1];
 
-      context.moveTo(orgx + WIDTH/2, orgy + HEIGHT/2);
+      context.moveTo(orgx + XOFFSET, orgy + YOFFSET);
     }
     else {
-      context.lineTo(pcpy[0] + WIDTH/2, pcpy[1] + HEIGHT/2);
+      context.lineTo(pcpy[0] + XOFFSET, pcpy[1] + YOFFSET);
       context.stroke();
     }
   }
 
-  context.lineTo(orgx + WIDTH/2, orgy + HEIGHT/2);
+  context.lineTo(orgx + XOFFSET, orgy + YOFFSET);
   context.stroke();
+}
+
+function draw_player() {
+  context.drawImage(ahri.imgs[0], PXOFFSET, PYOFFSET, PSIZE, PSIZE);
 }
