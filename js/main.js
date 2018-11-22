@@ -1,4 +1,4 @@
-var canvas, context;
+var canvas, context, renderer;
 
 var sim_time = 0;
 var prev_time = 0;
@@ -12,6 +12,8 @@ function init() {
   canvas.height = HEIGHT;
 
   context = canvas.getContext("2d");
+
+  renderer = new tilemapRenderer();
 
   requestAnimationFrame(main);
 }
@@ -29,11 +31,12 @@ function nextFrame(time) {
   return true;
 }
 
+// Game loop
 function main(time) {
   if(!nextFrame()) return;
 
-  updatePlayer();
-  draw();
+  ahri.update();
+  renderer.draw();
 
   requestAnimationFrame(main);
 }

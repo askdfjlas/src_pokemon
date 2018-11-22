@@ -7,104 +7,109 @@ const CAMERAANGLE = 0.5;
 const VIEWX = WIDTH/2;
 const VIEWY = HEIGHT/2;
 
-function transform() {
-  var true_point_arr = [];
+class transform {
+  constructor() {
+    this.width = point_arr[0].length;
+    this.height = point_arr.length;
 
-  var translateMatrix = translate();
-  var rotateMatrix = rotate();
-  var projectionMatrix = project();
+    this.true_point_arr = [];
 
-  var transformMatrix = math.multiply(translateMatrix, rotateMatrix);
-  transformMatrix = math.multiply(projectionMatrix, transformMatrix);
-
-  var width = point_arr[0].length;
-  var height = point_arr.length;
-
-  for(var i = 0; i < height; i++) {
-    true_point_arr.push([]);
-    for(var j = 0; j < width; j++) {
-      var original = point_arr[i][j];
-      var newPoint = transform_point(original, transformMatrix);
-
-      true_point_arr[i].push(newPoint);
-    }
+    this.zOffset = ahri.y*Math.atan(ahri.xRotation);
+    this.yOffset = ahri.y*Math.cos(ahri.xRotation);
   }
 
-  return true_point_arr;
-}
+  get_points() {
+    var translateMatrix = this.translate();
+    var rotateMatrix = this.rotate();
+    var projectionMatrix = this.project();
 
-function transform_point(original, transformMatrix) {
-  var point = math.matrix(
-    [[original[0]*TILESIZE],
-    [original[1]*TILESIZE],
-    [original[2]*TILESIZE],
-    [1]]
-  );
+    var transformMatrix = math.multiply(translateMatrix, rotateMatrix);
+    var transformMatrix = math.multiply(projectionMatrix, transformMatrix);
 
-  point = math.multiply(transformMatrix, point);
-  var newPoint = point.valueOf();
+    for(var i = 0; i < this.height; i++) {
+      this.true_point_arr.push([]);
+      for(var j = 0; j < this.width; j++) {
+        var original = point_arr[i][j];
+        var newPoint = this.transform_point(original, transformMatrix);
 
-  return [newPoint[0][0], newPoint[1][0], newPoint[2][0], newPoint[3][0]];
-}
+        this.true_point_arr[i].push(newPoint);
+      }
+    }
 
-function translate() {
-  var zOffset = ahri.y*Math.atan(ahri.xRotation);
+    return this.true_point_arr;
+  }
 
-  var translateMatrix = math.matrix(
-    [[1, 0, 0, -ahri.x],
-    [0, 1, 0, ahri.y],
-    [0, 0, 1, 2*CAMERADISTANCE + zOffset],
-    [0, 0, 0, 1]]
-  );
+  transform_point(original, transformMatrix) {
+    var point = math.matrix(
+      [[original[0]*TILESIZE],
+      [original[1]*TILESIZE],
+      [original[2]*TILESIZE],
+      [1]]
+    );
 
-  return translateMatrix;
-}
+    point = math.multiply(transformMatrix, point);
+    var newPoint = point.valueOf();
 
-function rotate() {
-  return math.multiply(rotateX(), rotateZ());
-}
+    return [newPoint[0][0], newPoint[1][0], newPoint[2][0], newPoint[3][0]];
+  }
 
-function rotateZ() {
-  var c = Math.cos(ahri.zRotation);
-  var s = Math.sin(ahri.zRotation);
+  translate() {
+    var translateMatrix = math.matrix(
+      [[1, 0, 0, -ahri.x],
+      [0, 1, 0, this.yOffset],
+      [0, 0, 1, 2*CAMERADISTANCE + this.zOffset],
+      [0, 0, 0, 1]]
+    );
 
-  var rotateMatrix = math.matrix(
-    [[c, -s, 0, 0],
-    [s, c, 0, 0],
-    [0, 0, 1, 0],
-    [0, 0, 0, 1]]
-  );
+    return translateMatrix;
+  }
 
-  return rotateMatrix;
-}
+  rotate() {
+    return math.multiply(this.rotateX(), this.rotateZ());
+  }
 
-function rotateX() {
-  var c = Math.cos(ahri.xRotation);
-  var s = Math.sin(ahri.xRotation);
+  rotateZ() {
+    var c = Math.cos(ahri.zRotation);
+    var s = Math.sin(ahri.zRotation);
 
-  var rotateMatrix = math.matrix(
-    [[1, 0, 0, 0],
-    [0, c, -s, 0],
-    [0, s, c, 0],
-    [0, 0, 0, 1]]
-  );
+    var rotateMatrix = math.matrix(
+      [[c, -s, 0, 0],
+      [s, c, 0, 0],
+      [0, 0, 1, 0],
+      [0, 0, 0, 1]]
+    );
 
-  return rotateMatrix;
-}
+    return rotateMatrix;
+  }
 
+  rotateX() {
+    var c = Math.cos(ahri.xRotation);
+    var s = Math.sin(ahri.xRotation);
 
-function project() {
-  const f = 300;
+    var rotateMatrix = math.matrix(
+      [[1, 0, 0, 0],
+      [0, c, -s, 0],
+      [0, s, c, 0],
+      [0, 0, 0, 1]]
+    );
 
-  // Projection matrix taken from http://metalbyexample.com/linear-algebra/
-  var projectionMatrix = math.matrix(
-    [[CAMERADISTANCE/VIEWX, 0, 0, 0],
-    [0, CAMERADISTANCE/VIEWY, 0, 0],
-    [0, 0, -f/(f-CAMERADISTANCE), -(f*CAMERADISTANCE)/(f-CAMERADISTANCE)],
-    [0, 0, 1, 0]]
-  );
+    return rotateMatrix;
+  }
 
-  return projectionMatrix;
+  project() {
+    const f = 300;
+
+    // Projection matrix taken from http://metalbyexample.com/linear-algebra/
+    var projectionMatrix = math.matrix(
+      [[CAMERADISTANCE/VIEWX, 0, 0, 0],
+      [0, CAMERADISTANCE/VIEWY, 0, 0],
+      [0, 0, -f/(f-CAMERADISTANCE), -(f*CAMERADISTANCE)/(f-CAMERADISTANCE)],
+      [0, 0, 1, 0]]
+    );
+
+    return projectionMatrix;
+  }
+
 }
 
 function clip_test(point) {
