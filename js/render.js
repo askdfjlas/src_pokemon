@@ -1,7 +1,7 @@
 const PSIZE = 60;
 
 const PXOFFSET = 450 - PSIZE/2;
-const PYOFFSET = 300 - PSIZE/2 - 10;
+const PYOFFSET = 300 - PSIZE/2 - 15;
 
 const XOFFSET = 428;
 const YOFFSET = 282;
@@ -70,6 +70,6 @@ class tilemapRenderer {
   }
 
   draw_player() {
-    context.drawImage(ahri.imgs[0], PXOFFSET, PYOFFSET, PSIZE, PSIZE);
+    context.drawImage(ahri.getSprite(), PXOFFSET, PYOFFSET, PSIZE, PSIZE);
   }
 }

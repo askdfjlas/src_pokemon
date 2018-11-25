@@ -1,16 +1,16 @@
 function keydown(evt) {
   switch(evt.keyCode) {
     case 37:
-      ahri.inputs[0] = true;
+      ahri.inputs[direction.left] = true;
       break;
     case 38:
-      ahri.inputs[1] = true;
+      ahri.inputs[direction.up] = true;
       break;
     case 39:
-      ahri.inputs[2] = true;
+      ahri.inputs[direction.right] = true;
       break;
     case 40:
-      ahri.inputs[3] = true;
+      ahri.inputs[direction.down] = true;
       break;
 
     // ~~~~~~~~~~~~~~~~~~~~~
